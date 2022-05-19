@@ -1,7 +1,6 @@
 ﻿using SGEngine;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading;
 
 namespace Snake
 {
@@ -22,6 +21,7 @@ namespace Snake
         UIText scoreText;
 
         List<Direction> dirs = new List<Direction>() { Direction.RIGHT };
+        Direction lastDir;
         bool isAlive = true;
 
         public Snake() : base(800, 600, "Snake")
@@ -72,29 +72,32 @@ namespace Snake
                 tick = 0;
                 if (isAlive)
                 {
-                    while (dirs.Count > 0)
+                    if (dirs.Count == 0) dirs.Add(lastDir);
+                    for (int i = snake.Count - 1; i > 0; i--)
+                        snake[i].Position = snake[i - 1].Position.Copy();
+                    switch (dirs[0])
                     {
-                        for (int i = snake.Count - 1; i > 0; i--)
-                            snake[i].Position = snake[i - 1].Position.Copy();
-                        switch (dirs[0])
-                        {
-                            case Direction.UP:
-                                snake[0].Position.Y -= pixelSize.Y;
-                                break;
-                            case Direction.DOWN:
-                                snake[0].Position.Y += pixelSize.Y;
-                                break;
-                            case Direction.LEFT:
-                                snake[0].Position.X -= pixelSize.X;
-                                break;
-                            case Direction.RIGHT:
-                                snake[0].Position.X += pixelSize.X;
-                                break;
-                        }
-                        if (dirs.Count == 1) break;
+                        case Direction.UP:
+                            snake[0].Position.Y -= pixelSize.Y;
+                            snake[0].Position.Y = mod((int)snake[0].Position.Y, CurrentWindow.WindowHeight);
+                            break;
+                        case Direction.DOWN:
+                            snake[0].Position.Y += pixelSize.Y;
+                            snake[0].Position.Y = mod((int)snake[0].Position.Y, CurrentWindow.WindowHeight);
+                            break;
+                        case Direction.LEFT:
+                            snake[0].Position.X -= pixelSize.X;
+                            snake[0].Position.X = mod((int)snake[0].Position.X, CurrentWindow.WindowWidth);
 
-                        dirs.RemoveAt(0);
+                            break;
+                        case Direction.RIGHT:
+                            snake[0].Position.X += pixelSize.X;
+                            snake[0].Position.X = mod((int)snake[0].Position.X, CurrentWindow.WindowWidth);
+                            break;
                     }
+
+                    lastDir = dirs[0];
+                    dirs.RemoveAt(0);
 
                     List<Vector> coords = new List<Vector>();
                     foreach (var s in snake)
@@ -102,6 +105,8 @@ namespace Snake
                         if (coords.Count > 0 && CheckCoords(s.Position, coords))
                         {
                             isAlive = false;
+                            snake[0].Destroy();
+                            snake.RemoveAt(0);
                             break;
                         }
                         coords.Add(s.Position);
@@ -144,6 +149,8 @@ namespace Snake
                 {
                     AppLogger.Info("Loser!");
                 }
+
+                dirs.Clear();
             }
             tick++;
 
@@ -153,7 +160,7 @@ namespace Snake
         {
             if (dirs.Count >= 2) return;
 
-            Direction last = dirs[dirs.Count - 1];
+            Direction last = dirs.Count > 0 ? dirs[dirs.Count - 1] : lastDir;
 
             if (Input.GetKey('W') && last != Direction.DOWN && last != Direction.UP)
             {
@@ -181,5 +188,12 @@ namespace Snake
             }
             return false;
         }
+
+        int mod(int x, int m)
+        {
+            int r = x % m;
+            return r < 0 ? r + m : r;
+        }
+
     }
 }

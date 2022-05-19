@@ -11,8 +11,8 @@ namespace SGEngine
         public static SGWindow CurrentWindow = null;
         private Thread GameLoopThread = null;
 
-        public Logger CoreLogger { get; private set; }
-        public Logger AppLogger { get; private set; }
+        public static Logger CoreLogger { get; private set; }
+        public static Logger AppLogger { get; private set; }
 
         private static List<Shape> Shapes;
         private static List<UI> UIs = new List<UI>();
@@ -87,6 +87,7 @@ namespace SGEngine
             if (p == null) return false;
 
             Shapes.Add(p);
+            CoreLogger.Info("Registered new shape!");
 
             return true;
         }
@@ -95,6 +96,7 @@ namespace SGEngine
         {
             if (p == null) return false;
 
+            CoreLogger.Info("Unregistered shape!");
             return Shapes.Remove(p);
         }
 

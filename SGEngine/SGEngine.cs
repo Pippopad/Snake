@@ -68,7 +68,6 @@ namespace SGEngine
         private void Renderer(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.Clear(Color.Cyan);
 
             List<Sprite2D> ToRender = new List<Sprite2D>(Sprites);
 

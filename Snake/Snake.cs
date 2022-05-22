@@ -33,6 +33,7 @@ namespace Snake
             int sWidth = CurrentWindow.WindowWidth;
             int sHeight = CurrentWindow.WindowHeight;
 
+            // Rewrite
             new SGImage(new Vector(0, 0), new Vector(800, 600), "bg.png");
             apple = new Shape(new Vector(Random.NextInt((int)((CurrentWindow.WindowWidth - pixelSize.X) / pixelSize.X)) * pixelSize.X + 1, Random.NextInt((int)((CurrentWindow.WindowHeight - pixelSize.Y) / pixelSize.Y)) * pixelSize.Y + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
             AppLogger.Info(apple.Position.ToString());
@@ -143,11 +144,13 @@ namespace Snake
                         appleAte++;
                         if (maxTick > 0 && appleAte % 10 == 0) maxTick--;
                         scoreText.Text = $"Score: {appleAte}";
+
                         Vector applePos;
                         do
                         {
                             applePos = new Vector(Random.NextInt((int)((CurrentWindow.WindowWidth - pixelSize.X) / pixelSize.X)) * pixelSize.X + 1, Random.NextInt((int)((CurrentWindow.WindowHeight - pixelSize.Y) / pixelSize.Y)) * pixelSize.Y + 1);
                         } while (snake.Any(body => IsCoordsIn(applePos, body.Position, body.Position + body.Scale)));
+
                         apple = new Shape(applePos, new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
                         AppLogger.Info(apple.Position.ToString());
                     }

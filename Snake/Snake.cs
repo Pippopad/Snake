@@ -1,6 +1,7 @@
 ﻿using SGEngine;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace Snake
 {
@@ -32,6 +33,7 @@ namespace Snake
             int sWidth = CurrentWindow.WindowWidth;
             int sHeight = CurrentWindow.WindowHeight;
 
+            new SGImage(new Vector(0, 0), new Vector(800, 600), "bg.png");
             apple = new Shape(new Vector(Random.NextInt((int)((CurrentWindow.WindowWidth - pixelSize.X) / pixelSize.X)) * pixelSize.X + 1, Random.NextInt((int)((CurrentWindow.WindowHeight - pixelSize.Y) / pixelSize.Y)) * pixelSize.Y + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
             AppLogger.Info(apple.Position.ToString());
 
@@ -141,7 +143,12 @@ namespace Snake
                         appleAte++;
                         if (maxTick > 0 && appleAte % 10 == 0) maxTick--;
                         scoreText.Text = $"Score: {appleAte}";
-                        apple = new Shape(new Vector(Random.NextInt((int)((CurrentWindow.WindowWidth - pixelSize.X) / pixelSize.X)) * pixelSize.X + 1, Random.NextInt((int)((CurrentWindow.WindowHeight - pixelSize.Y) / pixelSize.Y)) * pixelSize.Y + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
+                        Vector applePos;
+                        do
+                        {
+                            applePos = new Vector(Random.NextInt((int)((CurrentWindow.WindowWidth - pixelSize.X) / pixelSize.X)) * pixelSize.X + 1, Random.NextInt((int)((CurrentWindow.WindowHeight - pixelSize.Y) / pixelSize.Y)) * pixelSize.Y + 1);
+                        } while (snake.Any(body => IsCoordsIn(applePos, body.Position, body.Position + body.Scale)));
+                        apple = new Shape(applePos, new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
                         AppLogger.Info(apple.Position.ToString());
                     }
                 }
@@ -162,19 +169,19 @@ namespace Snake
 
             Direction last = dirs.Count > 0 ? dirs[dirs.Count - 1] : lastDir;
 
-            if (Input.GetKey('W') && last != Direction.DOWN && last != Direction.UP)
+            if ((Input.GetKey('W') || Input.GetKey((char)38)) && last != Direction.DOWN && last != Direction.UP)
             {
                 dirs.Add(Direction.UP);
             }
-            else if (Input.GetKey('S') && last != Direction.UP && last != Direction.DOWN)
+            else if ((Input.GetKey('S') || Input.GetKey((char)40)) && last != Direction.UP && last != Direction.DOWN)
             {
                 dirs.Add(Direction.DOWN);
             }
-            else if (Input.GetKey('A') && last != Direction.RIGHT && last != Direction.LEFT)
+            else if ((Input.GetKey('A') || Input.GetKey((char)37)) && last != Direction.RIGHT && last != Direction.LEFT)
             {
                 dirs.Add(Direction.LEFT);
             }
-            else if (Input.GetKey('D') && last != Direction.LEFT && last != Direction.RIGHT)
+            else if ((Input.GetKey('D') || Input.GetKey((char)39)) && last != Direction.LEFT && last != Direction.RIGHT)
             {
                 dirs.Add(Direction.RIGHT);
             }
@@ -187,6 +194,11 @@ namespace Snake
                 if (coords == c) return true;
             }
             return false;
+        }
+
+        private bool IsCoordsIn(Vector coords, Vector topLeft, Vector bottomRight)
+        {
+            return coords.X >= topLeft.X && coords.X <= bottomRight.X && coords.Y >= topLeft.Y && coords.Y <= bottomRight.Y;
         }
 
         int mod(int x, int m)

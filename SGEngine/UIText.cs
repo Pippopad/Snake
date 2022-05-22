@@ -11,7 +11,6 @@ namespace SGEngine
     public class UIText : UI
     {
         public string Text { get; set; }
-        public Vector Position { get; set; }
         public Font Font { get; set; }
         public SolidBrush Foreground { get; set; }
 
@@ -27,14 +26,9 @@ namespace SGEngine
             SGEngine.RegisterUI(this);
         }
 
-        public void Draw(Graphics g)
+        public override void Draw(Graphics g)
         {
             g.DrawString(this.Text, this.Font, this.Foreground, new PointF(Position.X, Position.Y));
-        }
-
-        public void Destroy()
-        {
-            SGEngine.RegisterUI(this);
         }
     }
 }

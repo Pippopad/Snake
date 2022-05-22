@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SGEngine
@@ -11,11 +12,14 @@ namespace SGEngine
 
         public SGWindow(int width, int height, string title)
         {
-            this.Width = this.WindowWidth = width;
-            this.Height = this.WindowHeight = height;
+            this.WindowWidth = width;
+            this.WindowHeight = height;
+            this.Size = new Size(width + 17, height + 40);
             this.Title = this.Text = title;
 
             this.DoubleBuffered = true;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
         }
     }
 }

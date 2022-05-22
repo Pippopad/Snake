@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,6 +61,21 @@ namespace SGEngine
         public override string ToString()
         {
             return $"Vector({this.X}, {this.Y})";
+        }
+
+        public Size ToSize()
+        {
+            return new Size((int)this.X, (int)this.Y);
+        }
+
+        public Point ToPoint()
+        {
+            return new Point((int)this.X, (int)this.Y);
+        }
+
+        public PointF ToPointF()
+        {
+            return new PointF(this.X, this.Y);
         }
     }
 }

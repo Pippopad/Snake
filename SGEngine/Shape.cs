@@ -7,24 +7,19 @@ using System.Threading.Tasks;
 
 namespace SGEngine
 {
-    public class Shape
+    public class Shape : Sprite2D
     {
-        public Vector Position { get; set; }
-        public Vector Scale { get; set; }
         public Color FillColor { get; set; }
 
-        public Shape(Vector position, Vector scale, Color fillColor)
+        public Shape(Vector position, Vector scale, Color fillColor) : base(position, scale)
         {
-            Position = position;
-            Scale = scale;
             FillColor = fillColor;
 
-            SGEngine.RegisterShape(this);
         }
 
-        public void Destroy()
+        public override void Draw(Graphics g)
         {
-            SGEngine.UnregisterShape(this);
+            g.FillRectangle(new SolidBrush(this.FillColor), (int)this.Position.X, (int)this.Position.Y, this.Scale.X, this.Scale.Y);
         }
     }
 }

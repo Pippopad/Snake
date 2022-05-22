@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -14,7 +15,7 @@ namespace SGEngine
         public static Logger CoreLogger { get; private set; }
         public static Logger AppLogger { get; private set; }
 
-        private static List<Shape> Shapes;
+        private static List<Sprite2D> Sprites;
         private static List<UI> UIs = new List<UI>();
 
         public SGEngine(int width, int height, string title)
@@ -27,7 +28,7 @@ namespace SGEngine
             CoreLogger = new Logger("Core", CurrentWindow);
             AppLogger = new Logger("Application", CurrentWindow);
 
-            Shapes = new List<Shape>();
+            Sprites = new List<Sprite2D>();
 
             Random.Init();
 
@@ -69,11 +70,11 @@ namespace SGEngine
             Graphics g = e.Graphics;
             g.Clear(Color.Cyan);
 
-            List<Shape> ToRender = new List<Shape>(Shapes);
+            List<Sprite2D> ToRender = new List<Sprite2D>(Sprites);
 
-            foreach (var shape in ToRender)
+            foreach (var sprite in ToRender)
             {
-                g.FillRectangle(new SolidBrush(shape.FillColor), (int)shape.Position.X, (int)shape.Position.Y, shape.Scale.X, shape.Scale.Y);
+                sprite.Draw(g);
             }
 
             foreach (var ui in UIs)
@@ -82,22 +83,23 @@ namespace SGEngine
             }
         }
 
-        public static bool RegisterShape(Shape p)
+        public static bool RegisterSprite(Sprite2D p)
         {
             if (p == null) return false;
 
-            Shapes.Add(p);
-            CoreLogger.Info("Registered new shape!");
+            Sprites.Add(p);
+            CoreLogger.Info($"Registered new sprite!");
+            if (p is SGImage) CoreLogger.Info($"\t- {((SGImage)p).Img}");
 
             return true;
         }
 
-        public static bool UnregisterShape(Shape p)
+        public static bool UnregisterSprite(Sprite2D p)
         {
             if (p == null) return false;
 
-            CoreLogger.Info("Unregistered shape!");
-            return Shapes.Remove(p);
+            CoreLogger.Info("Unregistered sprite!");
+            return Sprites.Remove(p);
         }
 
         public static bool RegisterUI(UI ui)
@@ -105,6 +107,7 @@ namespace SGEngine
             if (ui == null) return false;
 
             UIs.Add(ui);
+            CoreLogger.Info("Registered new UI!");
 
             return true;
         }
@@ -113,6 +116,7 @@ namespace SGEngine
         {
             if (ui == null) return false;
 
+            CoreLogger.Info("Unregistered UI!");
             return UIs.Remove(ui);
         }
 

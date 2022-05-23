@@ -14,7 +14,6 @@ namespace SGEngine
         public SGImage(Vector position, Vector scale, string path) : base(position, scale)
         {
             this.Img = System.Drawing.Image.FromFile(path);
-
             SGEngine.RegisterSprite(this);
         }
 

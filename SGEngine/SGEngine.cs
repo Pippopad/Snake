@@ -18,7 +18,9 @@ namespace SGEngine
         private static List<Sprite2D> Sprites;
         private static List<UI> UIs = new List<UI>();
 
-        public SGEngine(int width, int height, string title)
+        public List<string> Args { get; private set; }
+
+        public SGEngine(int width, int height, string title, List<string> args)
         {
             CurrentWindow = new SGWindow(width, height, title);
             CurrentWindow.Paint += Renderer;
@@ -29,6 +31,8 @@ namespace SGEngine
             AppLogger = new Logger("Application", CurrentWindow);
 
             Sprites = new List<Sprite2D>();
+
+            this.Args = args;
 
             Random.Init();
 

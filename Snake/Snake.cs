@@ -17,7 +17,7 @@ namespace Snake
     {
         Vector pixelSize = new Vector(25, 25);
 
-        List<Shape> snake = new List<Shape>();
+        List<Sprite2D> snake = new List<Sprite2D>();
         Shape apple;
         UIText scoreText;
 
@@ -25,7 +25,7 @@ namespace Snake
         Direction lastDir;
         bool isAlive = true;
 
-        public Snake() : base(800, 600, "Snake")
+        public Snake(List<string> args) : base(800, 600, "Snake", args)
         {}
 
         public override void Start()
@@ -33,15 +33,24 @@ namespace Snake
             int sWidth = CurrentWindow.WindowWidth;
             int sHeight = CurrentWindow.WindowHeight;
 
-            // Rewrite
             new SGImage(new Vector(0, 0), new Vector(800, 600), "bg.png");
             apple = new Shape(new Vector(Random.NextInt((int)((CurrentWindow.WindowWidth - pixelSize.X) / pixelSize.X)) * pixelSize.X + 1, Random.NextInt((int)((CurrentWindow.WindowHeight - pixelSize.Y) / pixelSize.Y)) * pixelSize.Y + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
             AppLogger.Info(apple.Position.ToString());
 
-            snake.Add(new Shape(new Vector(sWidth / 2 + 1 + 4 * pixelSize.X, sHeight / 2 + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Green));
+            Sprite2D snake_head;
+            if (Args.Count > 0)
+            {
+                snake_head = new SGImage(new Vector(sWidth / 2 + 4 * pixelSize.X, sHeight / 2), new Vector(pixelSize.X, pixelSize.Y), $"{Args[0].ToLower()}.png");
+            }
+            else
+            {
+                snake_head = new Shape(new Vector(sWidth / 2 + 4 * pixelSize.X, sHeight / 2), new Vector(pixelSize.X, pixelSize.Y), Color.Green);
+            }
+            snake.Add(snake_head);
             for (int i = 3; i >= 0; i--)
             {
-                snake.Add(new Shape(new Vector(sWidth / 2 + i * pixelSize.X + 1, sHeight / 2 + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Lime));
+                snake.Add(new Shape(new Vector(sWidth / 2 + i * pixelSize.X, sHeight / 2), new Vector(pixelSize.X, pixelSize.Y), Color.Lime));
+                //snake.Add(new SGImage(new Vector(sWidth / 2 + i * pixelSize.X + 1, sHeight / 2 + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), "snake_body.png"));
             }
 
             scoreText = new UIText("Score: 0", new Vector(10, 10));
@@ -121,7 +130,7 @@ namespace Snake
                         
                         Vector lastPos = snake[snake.Count - 1].Position;
                         Vector secondLastPos = snake[snake.Count - 2].Position;
-                        snake.Add(new Shape(lastPos.Copy(), new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Lime));
+                        snake.Add(new Shape(lastPos.Copy(), new Vector(pixelSize.X, pixelSize.Y), Color.Lime));
                         
                         if (lastPos.Y < secondLastPos.Y)
                         {

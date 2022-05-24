@@ -26,6 +26,7 @@ namespace SGEngine
             CurrentWindow.Paint += Renderer;
             CurrentWindow.KeyDown += KeyDown;
             CurrentWindow.KeyUp += KeyUp;
+            CurrentWindow.FormClosed += FormClosed;
 
             CoreLogger = new Logger("Core", CurrentWindow);
             AppLogger = new Logger("Application", CurrentWindow);
@@ -41,6 +42,11 @@ namespace SGEngine
             GameLoopThread.Start();
 
             Application.Run(CurrentWindow);
+        }
+
+        private void FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Terminate();
         }
 
         private void KeyUp(object sender, KeyEventArgs e)
@@ -127,7 +133,7 @@ namespace SGEngine
         {
             try
             {
-                Thread.CurrentThread.Abort();
+                GameLoopThread.Abort();
                 Application.Exit();
             }
             catch

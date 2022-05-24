@@ -59,4 +59,7 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>COPY $(ProjectDir)*.png $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
 </Project>

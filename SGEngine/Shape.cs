@@ -14,7 +14,6 @@ namespace SGEngine
         public Shape(Vector position, Vector scale, Color fillColor) : base(position, scale)
         {
             FillColor = fillColor;
-
         }
 
         public override void Draw(Graphics g)

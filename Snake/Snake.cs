@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.IO;
 
 namespace Snake
 {
@@ -33,9 +34,9 @@ namespace Snake
             int sWidth = CurrentWindow.WindowWidth;
             int sHeight = CurrentWindow.WindowHeight;
 
-            new SGImage(new Vector(0, 0), new Vector(800, 600), "bg.png");
-            apple = new Shape(new Vector(Random.NextInt((int)((CurrentWindow.WindowWidth - pixelSize.X) / pixelSize.X)) * pixelSize.X + 1, Random.NextInt((int)((CurrentWindow.WindowHeight - pixelSize.Y) / pixelSize.Y)) * pixelSize.Y + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
-            AppLogger.Info(apple.Position.ToString());
+            CurrentWindow.SetBackground("bg.png");
+
+            apple = new Shape(new Vector(Random.NextInt((int)((sWidth - pixelSize.X) / pixelSize.X)) * pixelSize.X + 1, Random.NextInt((int)((sHeight - pixelSize.Y) / pixelSize.Y)) * pixelSize.Y + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
 
             Sprite2D snake_head;
             if (Args.Count > 0)
@@ -44,25 +45,15 @@ namespace Snake
             }
             else
             {
-                snake_head = new Shape(new Vector(sWidth / 2 + 4 * pixelSize.X, sHeight / 2), new Vector(pixelSize.X, pixelSize.Y), Color.Green);
+                snake_head = new Shape(new Vector(sWidth / 2 + 4 * pixelSize.X, sHeight / 2), new Vector(pixelSize.X, pixelSize.Y), Color.Blue);
             }
             snake.Add(snake_head);
             for (int i = 3; i >= 0; i--)
             {
                 snake.Add(new Shape(new Vector(sWidth / 2 + i * pixelSize.X, sHeight / 2), new Vector(pixelSize.X, pixelSize.Y), Color.Lime));
-                //snake.Add(new SGImage(new Vector(sWidth / 2 + i * pixelSize.X + 1, sHeight / 2 + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), "snake_body.png"));
             }
 
             scoreText = new UIText("Score: 0", new Vector(10, 10));
-
-            // test
-            //for (int y = 0; y < CurrentWindow.WindowHeight / pixelSize.Y; y++)
-            //{
-            //    for (int x = 0; x < CurrentWindow.WindowWidth / pixelSize.X; x++)
-            //    {
-            //        new Shape(new Vector(pixelSize.X / 2 + x * pixelSize.X, pixelSize.Y / 2 + y * pixelSize.Y), pixelSize, Color.FromArgb((int)(x * 255 / (CurrentWindow.WindowWidth / pixelSize.X)), (int)(y * 255 / (CurrentWindow.WindowHeight/ pixelSize.Y)), 0));
-            //    }
-            //}
         }
 
         int tick = 0;
@@ -71,13 +62,6 @@ namespace Snake
         public override void Update()
         {
             HandleInput();
-
-            // Debug
-            //snake[0].Position.Y = 0; snake[0].FillColor = Color.Red;
-            //snake[1].Position.Y = 50; snake[1].FillColor = Color.Orange;
-            //snake[2].Position.Y = 100; snake[2].FillColor = Color.Yellow;
-            //snake[3].Position.Y = 150; snake[3].FillColor = Color.Green;
-            //snake[4].Position.Y = 200; snake[4].FillColor = Color.Blue;
 
             if (tick == maxTick)
             {
@@ -100,7 +84,6 @@ namespace Snake
                         case Direction.LEFT:
                             snake[0].Position.X -= pixelSize.X;
                             snake[0].Position.X = mod((int)snake[0].Position.X, CurrentWindow.WindowWidth);
-
                             break;
                         case Direction.RIGHT:
                             snake[0].Position.X += pixelSize.X;
@@ -127,7 +110,6 @@ namespace Snake
                     if ((apple.Position.X >= snake[0].Position.X && apple.Position.X <= snake[0].Position.X + snake[0].Scale.X) &&
                         (apple.Position.Y >= snake[0].Position.Y && apple.Position.Y <= snake[0].Position.Y + snake[0].Scale.Y))
                     {
-                        
                         Vector lastPos = snake[snake.Count - 1].Position;
                         Vector secondLastPos = snake[snake.Count - 2].Position;
                         snake.Add(new Shape(lastPos.Copy(), new Vector(pixelSize.X, pixelSize.Y), Color.Lime));
@@ -161,18 +143,56 @@ namespace Snake
                         } while (snake.Any(body => IsCoordsIn(applePos, body.Position, body.Position + body.Scale)));
 
                         apple = new Shape(applePos, new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
-                        AppLogger.Info(apple.Position.ToString());
                     }
                 }
                 else
                 {
-                    AppLogger.Info("Loser!");
+                    foreach (var s in snake)
+                    {
+                        s.Destroy();
+                    }
+
+                    apple.Destroy();
+
+                    int? bestScore = GetBestScore();
+                    string msg = $"Hai perso! (Punteggio: {this.appleAte}";
+                    if (bestScore != null) msg += $", Miglior Punteggio: {bestScore}";
+                    msg += ")";
+                    AppLogger.VisualInfo(msg);
+
+                    if (bestScore == null || appleAte > bestScore) SaveBestScore();
+
+                    this.Exit();
                 }
 
                 dirs.Clear();
             }
             tick++;
 
+        }
+
+        private void SaveBestScore()
+        {
+            using (StreamWriter sw = new StreamWriter("score.dat"))
+            {
+                sw.WriteLine(appleAte);
+            }
+        }
+
+        private int? GetBestScore()
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader("score.dat"))
+                {
+                    int.TryParse(sr.ReadLine(), out int score);
+                    return score;
+                }
+            }
+            catch (System.Exception)
+            {
+                return null;
+            }
         }
 
         private void HandleInput()
@@ -218,6 +238,5 @@ namespace Snake
             int r = x % m;
             return r < 0 ? r + m : r;
         }
-
     }
 }

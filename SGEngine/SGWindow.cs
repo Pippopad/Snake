@@ -21,5 +21,24 @@ namespace SGEngine
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
         }
+
+        public void SetBackground(string path)
+        {
+            bool ok = false;
+            do
+            {
+                try
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        this.BackgroundImage = Image.FromFile(path);
+                    });
+                    ok = true;
+                }
+                catch (Exception)
+                {
+                }
+            } while (!ok);
+        }
     }
 }

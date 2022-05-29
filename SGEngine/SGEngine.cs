@@ -16,7 +16,7 @@ namespace SGEngine
         public static Logger AppLogger { get; private set; }
 
         private static List<Sprite2D> Sprites;
-        private static List<UI> UIs = new List<UI>();
+        private static List<UI> UIs;
 
         public List<string> Args { get; private set; }
 
@@ -32,6 +32,7 @@ namespace SGEngine
             AppLogger = new Logger("Application", CurrentWindow);
 
             Sprites = new List<Sprite2D>();
+            UIs = new List<UI>();
 
             this.Args = args;
 
@@ -94,7 +95,7 @@ namespace SGEngine
 
         public static bool RegisterSprite(Sprite2D p)
         {
-            if (p == null) return false;
+            if (p == null || Sprites.Any(x => x.Id == p.Id)) return false;
 
             Sprites.Add(p);
             CoreLogger.Info($"Registered new sprite!");
@@ -107,8 +108,17 @@ namespace SGEngine
         {
             if (p == null) return false;
 
-            CoreLogger.Info("Unregistered sprite!");
-            return Sprites.Remove(p);
+            for (int i = 0; i < Sprites.Count; i++)
+            {
+                if (Sprites[i].Id == p.Id)
+                {
+                    Sprites.RemoveAt(i);
+                    CoreLogger.Info("Unregistered sprite!");
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static bool RegisterUI(UI ui)
@@ -138,6 +148,14 @@ namespace SGEngine
             }
             catch
             {}
+        }
+
+        public void Exit()
+        {
+            CurrentWindow.Invoke((MethodInvoker)delegate
+            {
+                CurrentWindow.Close();
+            });
         }
 
         public abstract void Start();

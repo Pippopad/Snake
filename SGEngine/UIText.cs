@@ -14,8 +14,6 @@ namespace SGEngine
         public Font Font { get; set; }
         public SolidBrush Foreground { get; set; }
 
-        private StringFormat format;
-
         public UIText(string text, Vector position)
         {
             this.Text = text;

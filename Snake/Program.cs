@@ -10,7 +10,7 @@ namespace Snake
     {
         static void Main(string[] args)
         {
-            Snake game = new Snake(args.ToList());
+            new Snake(args.ToList());
         }
     }
 }

@@ -3,14 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake", "Snake\Snake.csproj", "{1E5735BD-E1D2-4A3F-A14F-14C3B810ECC3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SGEngine", "SGEngine\SGEngine.csproj", "{400A8A06-64FF-4203-81A7-19FF237B216E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "Launcher\Launcher.csproj", "{CA303C8D-C071-4F6F-86CB-FD370963234D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1E5735BD-E1D2-4A3F-A14F-14C3B810ECC3} = {1E5735BD-E1D2-4A3F-A14F-14C3B810ECC3}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake", "Snake\Snake.csproj", "{1E5735BD-E1D2-4A3F-A14F-14C3B810ECC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SGEngine", "SGEngine\SGEngine.csproj", "{400A8A06-64FF-4203-81A7-19FF237B216E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -36,7 +36,13 @@ namespace Snake
 
             CurrentWindow.SetBackground("bg.png");
 
-            apple = new Shape(new Vector(Random.NextInt((int)((sWidth - pixelSize.X) / pixelSize.X)) * pixelSize.X + 1, Random.NextInt((int)((sHeight - pixelSize.Y) / pixelSize.Y)) * pixelSize.Y + 1), new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
+            Vector applePos;
+            do
+            {
+                applePos = new Vector(Random.NextInt((int)((CurrentWindow.WindowWidth - pixelSize.X) / pixelSize.X)) * pixelSize.X + 1, Random.NextInt((int)((CurrentWindow.WindowHeight - pixelSize.Y) / pixelSize.Y)) * pixelSize.Y + 1);
+            } while (snake.Any(body => IsCoordsIn(applePos, body.Position, body.Position + body.Scale)));
+
+            apple = new Shape(applePos, new Vector(pixelSize.X - 1, pixelSize.Y - 1), Color.Red);
 
             Sprite2D snake_head;
             if (Args.Count > 0)
@@ -185,8 +191,9 @@ namespace Snake
             {
                 using (StreamReader sr = new StreamReader("score.dat"))
                 {
-                    int.TryParse(sr.ReadLine(), out int score);
-                    return score;
+                    if (int.TryParse(sr.ReadLine(), out int score))
+                        return score;
+                    return null;
                 }
             }
             catch (System.Exception)
